@@ -39,7 +39,7 @@ with a single verified space where:
 | CORS | **Flask-CORS** | ≥4.0 | Origin allow-list from env |
 | Rate limiting | **Flask-Limiter** | ≥3.5 | Brute-force protection on auth + invites |
 | Database driver | **PyMongo** | ≥4.6 | MongoDB access, indexes, cursor pagination |
-| Database | **MongoDB (Atlas / self-hosted)** | 6+/7 | Document store; 12 collections with tuned indexes |
+| Database | **MongoDB (Atlas / self-hosted)** | 6+/7 | Document store; 15 collections with tuned indexes |
 | Password hashing | **scrypt** (werkzeug) | — | Strong KDF; pbkdf2 fallback |
 | File storage | **Disk/object storage** (`STORAGE_DIR`) | — | Blobs never stored inside MongoDB |
 | Config | **python-dotenv** + env vars | ≥1.0 | Secrets never committed (`.env.example` placeholders only) |
@@ -58,7 +58,7 @@ with a single verified space where:
    │                                            │  PyMongo            │  Storage class
    ▼                                            ▼                     ▼
  openpgp.js encrypts/decrypts               MongoDB (Atlas)      Disk file storage
- on the device; server only ever            12 collections,      (encrypted blobs;
+ on the device; server only ever            15 collections,      (encrypted blobs;
  sees ciphertext                             unique indexes       metadata in Mongo)
 ```
 
@@ -127,8 +127,9 @@ reset `6/hour` · team create `10/hour` · invitations `20/hour, 5/min`.
 | `files` | File metadata/ownership/scope | `owner_id`, (`scope_type`,`scope_ref`) |
 | `teams` | Teams + members | `members` |
 | `invitations` | Team invites (pending/accepted/declined) | (`invitee_id`,`status`), (`team_id`,`status`) |
-| `posts` | Class feed (announcement/question/update) | (`class_id`,`_id` desc) |
-| `questions`/`replies` | Course Q&A + helpful-answer marks | course + recency indexes |
+| `posts` | Class feed: announcements / updates / **questions** | (`class_id`,`_id` desc) |
+| `comments` | Comments on feed posts | post + recency indexes |
+| `replies` | Q&A answers + helpful-answer marks | question + recency indexes |
 | `notes`, `study_groups`, `events` | Resources, groups, deadlines | scope + recency indexes |
 
 ---
